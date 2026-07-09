@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Launch Meta Ads with Claude</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #1c1c1a;
+    --muted: #6b6a66;
+    --line: #e4e2dc;
+    --accent: #b5482f;
+    --code-bg: #1e1d1b;
+    --code-ink: #f2f0ea;
+    --note-bg: #fbf3ef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171614;
+      --card: #201f1c;
+      --ink: #ecebe6;
+      --muted: #a3a099;
+      --line: #33312c;
+      --accent: #e06a4d;
+      --code-bg: #100f0e;
+      --code-ink: #f2f0ea;
+      --note-bg: #2a201c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 0 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 0 96px; }
+  .back { display: inline-block; margin-bottom: 24px; font-size: 0.9rem;
+    color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+  .kicker {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 12px;
+    font-weight: 700; color: var(--accent); margin: 0 0 14px;
+  }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .lead { font-size: 1.12rem; color: var(--muted); margin: 0; }
+  h2 { font-size: 1.35rem; margin: 48px 0 14px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 8px; }
+  .steps { padding-left: 22px; }
+  .steps li { margin: 0 0 14px; }
+  code {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 2px 6px; border-radius: 5px; font-size: 0.86em;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .prompt-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 8px; margin: 28px 0 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 10px 12px 10px 14px;
+  }
+  .prompt-head span { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: 0;
+    padding: 9px 18px; border-radius: 8px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; transition: opacity .15s, background .2s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { opacity: .9; }
+  .copy-btn.done { background: #2f8f5b; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    margin: 0; padding: 20px; border-radius: 10px;
+    overflow-x: auto; font-size: 0.82rem; line-height: 1.6;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .hint { font-size: 0.9rem; color: var(--muted); margin: 10px 2px 0; }
+  .note {
+    background: var(--note-bg); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 16px 20px; margin: 24px 0;
+  }
+  .note strong { color: var(--accent); }
+  .note p:last-child { margin-bottom: 0; }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 0.88rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&laquo; All guides</a>
+  <header>
+    <p class="kicker">Meta Ads Setup</p>
+    <h1>Launch Meta Ads with Claude</h1>
+    <p class="lead">Connect Claude to your Facebook and Instagram ad account, then build and launch a campaign just by talking to it. You describe the offer and the audience. Claude sets up the campaign, ad set, and ad, and leaves it paused so you can check everything before it spends a dollar.</p>
+  </header>
+
+  <h2>What you need first</h2>
+  <ul>
+    <li>A Facebook Page and, ideally, a connected Instagram account.</li>
+    <li>A Meta ad account inside Business Manager, with a payment method on file.</li>
+    <li>A destination for the ad: a landing page, registration page, or lead form.</li>
+    <li>Your ad creative ready to go: the image or video, plus the headline and body text. Claude can help write these, but have the video or image file on hand.</li>
+    <li>Claude, on a plan that lets you add connectors.</li>
+  </ul>
+
+  <h2>Step 1: Connect Claude to your Meta account</h2>
+  <p>Meta has an official connector that lets Claude read and manage your ad account directly. You sign in with Meta, the same way you would log into any app with Facebook. No developer account, no code, no waiting for approval.</p>
+  <ol class="steps">
+    <li>In Claude, open your connector settings and add a custom connector.</li>
+    <li>Paste this address: <code>https://mcp.facebook.com/ads</code></li>
+    <li>Sign in with the Meta account that owns your ad account, and approve the access it asks for.</li>
+    <li>Back in Claude, start a new chat and say <em>"list my Meta ad accounts."</em> If it names your account, you are connected.</li>
+  </ol>
+  <div class="note">
+    <p><strong>Heads up.</strong> This connector is in open beta and rolls out gradually, so not every account has it yet. It is free during the beta. If you cannot add it, check back in a week or two. Any campaign Claude creates through it starts paused by default, so nothing goes live by accident.</p>
+  </div>
+
+  <h2>Step 2: The prompt</h2>
+  <p>Once you are connected, paste this whole block into Claude. It walks Claude through building your campaign the safe way: paused first, full summary, and it only goes live after you say so.</p>
+
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" id="copyBtn">Copy prompt</button>
+    </div>
+    <pre><code id="promptText">You are helping me build and launch a Meta (Facebook and Instagram) ad campaign through the Meta Ads connector I have already added. I am not technical, so explain choices in plain words and never assume. Build everything PAUSED and do not set anything live until I clearly say "launch it."
+
+## First, confirm the connection
+1. List my Meta ad accounts and confirm which one we are using. If there is more than one, ask me to pick.
+2. Confirm the Facebook Page (and Instagram account, if any) we will run the ads from.
+
+## Then, gather what you need (ask, do not assume)
+Ask me for these one topic at a time, in plain language:
+- My goal for this campaign. Examples: collect leads, get registrations for a webclass, get sales, get messages. Map my answer to the correct Meta objective and tell me which one you picked and why.
+- My daily budget, and the date I want it to start.
+- Who I want to reach: country or countries, age range, gender, and any interests or behaviors. If I am not sure, suggest a sensible starting audience and explain it.
+- Where the ad sends people: my destination URL or lead form.
+- My creative: the image or video, the headline, the main text, and the button (for example "Learn More" or "Sign Up"). Offer to write the headline and text if I want, then let me approve them.
+
+## Naming (so my reports stay readable)
+Name the campaign, ad set, and ad in lowercase_with_underscores. Keep names short but clear, so I can tell them apart in a report six months from now. Tell me the names you chose.
+
+## Build it PAUSED
+1. Create the campaign, ad set, and ad, all in the paused state.
+2. Put a spending limit in place so it cannot overspend while I review.
+3. If my account supports the campaign-level budget, use it, and explain in one line what that means.
+
+## Show me a summary before anything goes live
+Give me a plain-English recap I can check:
+- Objective, in normal words, and what Meta will optimize for.
+- Daily budget and start date.
+- The audience: locations, ages, and targeting.
+- Placements (where the ad will show).
+- The exact headline, text, button, and destination URL.
+- The names you used for the campaign, ad set, and ad.
+Then ask me to review each part and tell you what to change.
+
+## Going live
+- Do NOT set anything active until I reply with "launch it."
+- When I do, turn ONLY the campaign to active. Do not rebuild or re-edit the ad, because that can reset settings.
+- After it is live, tell me how to watch results and when it is normal to start seeing them.
+
+Start now by listing my ad accounts and confirming which one we are using.</code></pre>
+  </div>
+  <p class="hint">The prompt carries its own instructions. Just paste it and answer Claude's questions one at a time.</p>
+
+  <h2>What the connector actually does</h2>
+  <p>Once connected, Claude can see your ad accounts, pages, campaigns, and results, and it can create and change campaigns for you. You talk to it in plain language, and it makes the calls to Meta in the background. You are not clicking through Ads Manager. You are describing what you want and checking its work.</p>
+  <p>It can build a campaign, set the budget and audience, write and place the ad, pull performance numbers, and pause or adjust things later. The account stays yours. Claude only acts through the access you approved when you signed in, and you can remove that access any time.</p>
+
+  <h2>Rules that keep you safe</h2>
+  <ul>
+    <li><strong>Build paused, always.</strong> Nothing should spend until you have read the summary and said go. The prompt enforces this.</li>
+    <li><strong>Set a spending limit.</strong> A daily cap and an account spending limit mean a mistake costs you a little, not a lot.</li>
+    <li><strong>Read the summary out loud.</strong> Check the audience, the budget, the destination link, and the ad text before you launch. Most costly errors are a wrong link or a budget with an extra zero.</li>
+    <li><strong>Flip only the campaign to live.</strong> When you launch, turn on the campaign itself. Reopening and re-saving the ad can reset targeting or tracking you set up.</li>
+    <li><strong>Start small.</strong> Give a new campaign a modest daily budget for a few days, see what the numbers say, then decide whether to raise it.</li>
+  </ul>
+
+  <h2>After it is live</h2>
+  <p>Ask Claude to pull your results whenever you want them. Good questions to ask it: "how much have I spent and how many leads so far," "which ad is performing best," and "is my cost per lead going up or down." Give a campaign a few days before you judge it. Meta needs time to learn who responds, and early numbers swing hard before they settle.</p>
+
+  <footer>
+    Connect once, describe what you want, and check the work before it goes live. Claude does the setup. You keep the control.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copyBtn');
+    var textEl = document.getElementById('promptText');
+    btn.addEventListener('click', function () {
+      var text = textEl.innerText;
+      function done() {
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = 'Copy prompt';
+          btn.classList.remove('done');
+        }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+      } else {
+        fallback(text, done);
+      }
+    });
+    function fallback(text, cb) {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); cb();
+    }
+  })();
+</script>
+</body>
+</html>

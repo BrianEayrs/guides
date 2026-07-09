@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UTM Tracking Setup Guide</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #1c1c1a;
+    --muted: #6b6a66;
+    --line: #e4e2dc;
+    --accent: #b5482f;
+    --code-bg: #1e1d1b;
+    --code-ink: #f2f0ea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171614;
+      --card: #201f1c;
+      --ink: #ecebe6;
+      --muted: #a3a099;
+      --line: #33312c;
+      --accent: #e06a4d;
+      --code-bg: #100f0e;
+      --code-ink: #f2f0ea;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 0 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 0 96px; }
+  .back { display: inline-block; margin-bottom: 24px; font-size: 0.9rem;
+    color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+  .kicker {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 12px;
+    font-weight: 700; color: var(--accent); margin: 0 0 14px;
+  }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .lead { font-size: 1.12rem; color: var(--muted); margin: 0; }
+  h2 { font-size: 1.35rem; margin: 48px 0 14px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 8px; }
+  code {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 2px 6px; border-radius: 5px; font-size: 0.86em;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .prompt-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 8px; margin: 28px 0 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 10px 12px 10px 14px;
+  }
+  .prompt-head span { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: 0;
+    padding: 9px 18px; border-radius: 8px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; transition: opacity .15s, background .2s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { opacity: .9; }
+  .copy-btn.done { background: #2f8f5b; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    margin: 0; padding: 20px; border-radius: 10px;
+    overflow-x: auto; font-size: 0.82rem; line-height: 1.6;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .hint { font-size: 0.9rem; color: var(--muted); margin: 10px 2px 0; }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 0.88rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&laquo; All guides</a>
+  <header>
+    <p class="kicker">Meta Ads Setup</p>
+    <h1>UTM Tracking Setup Guide</h1>
+    <p class="lead">Build tracking codes for your Facebook and Instagram ads so you can see exactly which ad, audience, and campaign drives each lead or sale. Copy the prompt below, paste it into Claude, and answer its questions.</p>
+  </header>
+
+  <h2>The prompt</h2>
+  <p>Paste this whole block into Claude. It will ask for your landing page and campaign details, then hand you ready-to-paste tracking URLs.</p>
+
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" id="copyBtn">Copy prompt</button>
+    </div>
+    <pre><code id="promptText">You are helping me build UTM tracking codes for my Meta (Facebook/Instagram) ads so I can see exactly which ad, audience, and campaign drives each lead or sale in my analytics and CRM.
+
+Ask me for anything you need, then generate ready-to-paste tracking URLs.
+
+## What UTMs are (context for you)
+UTM parameters are tags added to the end of a destination URL. When someone clicks the ad, those tags travel with them and get recorded by my website, analytics, and CRM. They let me answer "which ad did this lead come from?" instead of guessing.
+
+There are five standard parameters:
+- utm_source — where the traffic comes from (the platform). Example: facebook
+- utm_medium — the type of traffic. Example: paid_social
+- utm_campaign — which campaign. Example: summer_launch
+- utm_content — which specific ad or creative. Example: hook_a_video
+- utm_term — optional, usually the audience or keyword. Example: lookalike_1pct
+
+## Naming rules (enforce these on every value)
+- All lowercase.
+- No spaces. Use underscores ( _ ) between words.
+- No special characters ( no &amp; ? = # / ' " ).
+- Be consistent. "facebook" and "Facebook" and "fb" are three different sources to analytics, so pick one and never change it.
+- Keep values short but readable, so I can tell them apart in a report six months from now.
+
+## Meta dynamic parameters (use these so I never hand-edit per ad)
+Meta can auto-fill values at click time. Prefer these where they fit, so one URL template works across a whole campaign:
+- {{campaign.name}} — fills in the campaign name
+- {{adset.name}} — fills in the ad set (usually the audience)
+- {{ad.name}} — fills in the ad (usually the creative/hook)
+- {{placement}} — fills in where it showed (feed, story, reel, etc.)
+
+A good default template using these:
+utm_source=facebook&amp;utm_medium=paid_social&amp;utm_campaign={{campaign.name}}&amp;utm_content={{ad.name}}&amp;utm_term={{adset.name}}
+
+Note: for Meta's dynamic values to read cleanly in reports, name my campaigns, ad sets, and ads in lowercase_with_underscores too.
+
+## What I want you to do
+1. Ask me for:
+   - My destination URL (the landing/registration page the ad points to).
+   - Whether I want fixed values or Meta's dynamic parameters (default to dynamic unless I say otherwise).
+   - My campaign name, and if fixed, my ad-set/audience names and ad/creative names.
+2. Build the full tracking URL(s): my destination URL, then a ? , then the UTM string. If my URL already contains a ? , join with &amp; instead.
+3. Give me:
+   - The complete URL(s), ready to paste.
+   - A plain-English legend of what each value means.
+   - Exactly where each piece goes in Meta Ads Manager (the "Website URL" field vs. the "URL parameters" field at the ad level).
+4. Flag any naming that breaks the rules above and fix it.
+
+## Where these go in Meta Ads Manager
+- At the ad level, put my clean destination URL (no parameters) in the Website URL field.
+- Put only the UTM string (everything after the ? ) in the URL parameters field, or paste the full URL with parameters directly into Website URL. Do not put it in both.
+
+Start by asking me for my destination URL and whether I want fixed or dynamic values.</code></pre>
+  </div>
+  <p class="hint">The prompt carries its own instructions, so you do not need to add anything. Just paste and answer.</p>
+
+  <h2>What UTMs actually do</h2>
+  <p>A UTM is a small tag added to the end of a link. When someone clicks your ad, those tags ride along with them and get recorded by your website, your analytics, and your CRM. Without them, every click looks the same. With them, you can tell that this lead came from the reel hook running to the cold audience, and that one came from a retargeting ad.</p>
+
+  <h2>The five parameters</h2>
+  <ul>
+    <li><code>utm_source</code> — the platform the traffic came from. Example: <code>facebook</code></li>
+    <li><code>utm_medium</code> — the type of traffic. Example: <code>paid_social</code></li>
+    <li><code>utm_campaign</code> — which campaign. Example: <code>summer_launch</code></li>
+    <li><code>utm_content</code> — the specific ad or creative. Example: <code>hook_a_video</code></li>
+    <li><code>utm_term</code> — optional. Usually the audience or keyword. Example: <code>lookalike_1pct</code></li>
+  </ul>
+
+  <h2>Naming rules</h2>
+  <p>Analytics reads your text literally, so consistency is everything.</p>
+  <ul>
+    <li>All lowercase.</li>
+    <li>No spaces. Use underscores between words.</li>
+    <li>No special characters like <code>&amp; ? = # /</code> or quotes.</li>
+    <li>Pick one spelling and never change it. <code>facebook</code>, <code>Facebook</code>, and <code>fb</code> count as three different sources.</li>
+    <li>Keep values short but readable, so they still make sense in a report six months from now.</li>
+  </ul>
+
+  <h2>Let Meta fill it in for you</h2>
+  <p>Instead of hand-editing a URL for every ad, Meta can auto-fill the values at click time. Use these placeholders and one template covers a whole campaign:</p>
+  <ul>
+    <li><code>{{campaign.name}}</code> — the campaign name</li>
+    <li><code>{{adset.name}}</code> — the ad set, usually your audience</li>
+    <li><code>{{ad.name}}</code> — the ad, usually your creative or hook</li>
+    <li><code>{{placement}}</code> — where it showed: feed, story, reel</li>
+  </ul>
+  <p>For these to read cleanly in reports, name your campaigns, ad sets, and ads in <code>lowercase_with_underscores</code> too.</p>
+
+  <h2>Where it goes in Ads Manager</h2>
+  <p>At the ad level, put your clean destination URL (no parameters) in the <strong>Website URL</strong> field. Put the UTM string in the <strong>URL parameters</strong> field. Or paste the full URL with parameters straight into Website URL. Do one or the other, never both, or the tags get doubled up.</p>
+
+  <footer>
+    Set up once, name things consistently, and every click tells you where it came from.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copyBtn');
+    var textEl = document.getElementById('promptText');
+    btn.addEventListener('click', function () {
+      var text = textEl.innerText;
+      function done() {
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = 'Copy prompt';
+          btn.classList.remove('done');
+        }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+      } else {
+        fallback(text, done);
+      }
+    });
+    function fallback(text, cb) {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); cb();
+    }
+  })();
+</script>
+</body>
+</html>
