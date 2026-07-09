@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Launch Meta Ads with Claude</title>
+<title>Run Your Meta Ads from the Terminal with Claude</title>
 <style>
   :root {
     --bg: #f7f6f3;
@@ -50,12 +50,10 @@
   h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
   .lead { font-size: 1.12rem; color: var(--muted); margin: 0; }
   h2 { font-size: 1.35rem; margin: 48px 0 14px; letter-spacing: -0.01em; }
-  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  h3 { font-size: 1.05rem; margin: 30px 0 8px; }
   p { margin: 0 0 16px; }
   ul, ol { margin: 0 0 16px; padding-left: 22px; }
   li { margin: 0 0 8px; }
-  .steps { padding-left: 22px; }
-  .steps li { margin: 0 0 14px; }
   code {
     background: var(--code-bg); color: var(--code-ink);
     padding: 2px 6px; border-radius: 5px; font-size: 0.86em;
@@ -64,7 +62,7 @@
   }
   .prompt-card {
     background: var(--card); border: 1px solid var(--line);
-    border-radius: 14px; padding: 8px; margin: 28px 0 8px;
+    border-radius: 14px; padding: 8px; margin: 22px 0 8px;
     box-shadow: 0 1px 2px rgba(0,0,0,.04);
   }
   .prompt-head {
@@ -76,7 +74,7 @@
     background: var(--accent); color: #fff; border: 0;
     padding: 9px 18px; border-radius: 8px; font-size: 0.9rem;
     font-weight: 600; cursor: pointer; transition: opacity .15s, background .2s;
-    font-family: inherit;
+    font-family: inherit; white-space: nowrap;
   }
   .copy-btn:hover { opacity: .9; }
   .copy-btn.done { background: #2f8f5b; }
@@ -96,6 +94,7 @@
   }
   .note strong { color: var(--accent); }
   .note p:last-child { margin-bottom: 0; }
+  .lib-title { font-size: 0.95rem; font-weight: 600; margin: 26px 0 0; }
   footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line);
     font-size: 0.88rem; color: var(--muted); }
   a { color: var(--accent); }
@@ -106,120 +105,168 @@
   <a class="back" href="../">&laquo; All guides</a>
   <header>
     <p class="kicker">Meta Ads Setup</p>
-    <h1>Launch Meta Ads with Claude</h1>
-    <p class="lead">Connect Claude to your Facebook and Instagram ad account, then build and launch a campaign just by talking to it. You describe the offer and the audience. Claude sets up the campaign, ad set, and ad, and leaves it paused so you can check everything before it spends a dollar.</p>
+    <h1>Run Your Meta Ads from the Terminal with Claude</h1>
+    <p class="lead">Give Claude direct access to your own ad account through Meta's Marketing API. Once it is wired in, your terminal Claude can upload creative, write the copy, build campaigns to your spec, pull results, and launch, all on your approval. You set it up once. After that, running ads is a short prompt.</p>
   </header>
 
-  <h2>What you need first</h2>
+  <h2>What you are building</h2>
+  <p>Three parts, set up one time:</p>
   <ul>
-    <li>A Facebook Page and, ideally, a connected Instagram account.</li>
-    <li>A Meta ad account inside Business Manager, with a payment method on file.</li>
-    <li>A destination for the ad: a landing page, registration page, or lead form.</li>
-    <li>Your ad creative ready to go: the image or video, plus the headline and body text. Claude can help write these, but have the video or image file on hand.</li>
-    <li>Claude, on a plan that lets you add connectors.</li>
+    <li><strong>Full API access.</strong> A Meta developer app and a System User token that does not expire. That token is a key to your ad account. Claude uses it to talk to Meta directly.</li>
+    <li><strong>A clean foundation.</strong> One naming pattern, server-side tracking, and saved audiences, so your data stays trustworthy and every campaign starts from the same base.</li>
+    <li><strong>A reusable playbook.</strong> A short document holding your account IDs, naming, tracking, and defaults. Paste it at the start of any future session and Claude has full context in one message.</li>
   </ul>
 
-  <h2>Step 1: Connect Claude to your Meta account</h2>
-  <p>Meta has an official connector that lets Claude read and manage your ad account directly. You sign in with Meta, the same way you would log into any app with Facebook. No developer account, no code, no waiting for approval.</p>
-  <ol class="steps">
-    <li>In Claude, open your connector settings and add a custom connector.</li>
-    <li>Paste this address: <code>https://mcp.facebook.com/ads</code></li>
-    <li>Sign in with the Meta account that owns your ad account, and approve the access it asks for.</li>
-    <li>Back in Claude, start a new chat and say <em>"list my Meta ad accounts."</em> If it names your account, you are connected.</li>
-  </ol>
+  <h2>Before you start</h2>
+  <ul>
+    <li>A Meta Business account with an ad account and a payment method on file.</li>
+    <li>A Facebook Page, and an Instagram account if you run there.</li>
+    <li>Claude running in a terminal (Claude Code), so it can make the API calls itself.</li>
+    <li>Comfort creating a developer app in your browser and setting an environment variable. The prompt walks you through both, but you do the clicks.</li>
+    <li>Your creative on hand: the image or video files. Claude can write the copy.</li>
+  </ul>
+
+  <h2>How the access works</h2>
+  <p>You create the token once in your browser. From then on, Claude runs the actual calls to Meta using that token: creating campaigns, uploading creative, reading results. You are not clicking through Ads Manager. You describe what you want, Claude builds it, and you approve before anything spends. Managing your own ad account this way does not need Meta's long app-review process. That only applies to managing other people's accounts at scale.</p>
+
   <div class="note">
-    <p><strong>Heads up.</strong> This connector is in open beta and rolls out gradually, so not every account has it yet. It is free during the beta. If you cannot add it, check back in a week or two. Any campaign Claude creates through it starts paused by default, so nothing goes live by accident.</p>
+    <p><strong>Treat the token like a password.</strong> It controls real money. Store it only as an environment variable. Never paste it into a chat, never put it in a file you commit to Git, and never let anything print it to the screen. If it ever leaks, delete it in Business Settings and generate a new one. The prompt below is built to respect all of this.</p>
   </div>
 
-  <h2>Step 2: The prompt</h2>
-  <p>Once you are connected, paste this whole block into Claude. It walks Claude through building your campaign the safe way: paused first, full summary, and it only goes live after you say so.</p>
+  <h2>Step 1: The setup prompt</h2>
+  <p>Paste this into your terminal Claude. It walks you from zero to full access, then sets your foundation and writes your playbook. Work one step at a time.</p>
 
   <div class="prompt-card">
     <div class="prompt-head">
       <span>Copy into Claude</span>
-      <button class="copy-btn" id="copyBtn">Copy prompt</button>
+      <button class="copy-btn" data-target="setupPrompt">Copy prompt</button>
     </div>
-    <pre><code id="promptText">You are helping me build and launch a Meta (Facebook and Instagram) ad campaign through the Meta Ads connector I have already added. I am not technical, so explain choices in plain words and never assume. Build everything PAUSED and do not set anything live until I clearly say "launch it."
+    <pre><code id="setupPrompt">You are setting me up to run my Meta (Facebook and Instagram) ads directly from this terminal, with full access to my own ad account through the Marketing API. I understand Claude and I am comfortable running commands and setting an environment variable. Walk me through this from zero, one step at a time, and wait for me to finish each step before moving on.
 
-## First, confirm the connection
-1. List my Meta ad accounts and confirm which one we are using. If there is more than one, ask me to pick.
-2. Confirm the Facebook Page (and Instagram account, if any) we will run the ads from.
+Security rules you must follow:
+- My access token is like a password to my ad spend. Never print it, never write it into a file that could be committed, and never ask me to paste it into this chat.
+- We store the token as an environment variable only. When you show commands that use it, refer to the variable, never the value.
 
-## Then, gather what you need (ask, do not assume)
-Ask me for these one topic at a time, in plain language:
-- My goal for this campaign. Examples: collect leads, get registrations for a webclass, get sales, get messages. Map my answer to the correct Meta objective and tell me which one you picked and why.
-- My daily budget, and the date I want it to start.
-- Who I want to reach: country or countries, age range, gender, and any interests or behaviors. If I am not sure, suggest a sensible starting audience and explain it.
-- Where the ad sends people: my destination URL or lead form.
-- My creative: the image or video, the headline, the main text, and the button (for example "Learn More" or "Sign Up"). Offer to write the headline and text if I want, then let me approve them.
+## Part 1: Create the access (I do the clicks, you give exact steps)
+1. Confirm I have a Meta Business account with an ad account and a payment method, plus a Facebook Page (and Instagram account if I have one).
+2. Walk me through creating a Meta developer app of type Business at developers.facebook.com and adding the Marketing API product to it. Tell me where to find my App ID.
+3. In Business Settings, walk me through creating a System User, assigning it to my ad account and Page with full control, and assigning my app to it.
+4. Walk me through generating a token for that System User with the permissions ads_management, ads_read, and business_management, set to never expire.
+5. Help me collect and write down everything EXCEPT the token: my ad account ID (act_...), Page ID, pixel or dataset ID, and Instagram account ID.
 
-## Naming (so my reports stay readable)
-Name the campaign, ad set, and ad in lowercase_with_underscores. Keep names short but clear, so I can tell them apart in a report six months from now. Tell me the names you chose.
+## Part 2: Wire the token into this terminal
+- Give me the exact command to store my token as an environment variable named META_TOKEN, and how to make it permanent in my shell profile, without ever echoing the value.
+- Then run one read-only test call to confirm access, such as listing the campaigns on my ad account. If it fails, help me fix the permissions before we go on.
 
-## Build it PAUSED
-1. Create the campaign, ad set, and ad, all in the paused state.
-2. Put a spending limit in place so it cannot overspend while I review.
-3. If my account supports the campaign-level budget, use it, and explain in one line what that means.
+## Part 3: Set the foundation
+Once the test call works:
+- Propose a naming pattern for campaigns, ad sets, and ads in lowercase_with_underscores that encodes objective, audience, and creative. Give three examples and use it on everything from now on.
+- Check my pixel is firing on my key pages, and check whether I have server-side tracking (Conversions API) on my main events. If not, walk me through it. Browser-only tracking leaves the optimizer half-blind and gets worse over time.
+- Confirm which standard events I fire (Lead, CompleteRegistration, Purchase, and so on) and which one each campaign type should optimize for.
+- Help me define the audiences I will reuse: a cold audience, a retargeting audience (site visitors, video viewers, engagers), and a lookalike if I have a source.
+- Set my default country or countries, age range, and a sensible starting daily budget.
+- Confirm a consistent UTM standard on my ad links so I can match spend to leads and sales in my CRM.
 
-## Show me a summary before anything goes live
-Give me a plain-English recap I can check:
-- Objective, in normal words, and what Meta will optimize for.
-- Daily budget and start date.
-- The audience: locations, ages, and targeting.
-- Placements (where the ad will show).
-- The exact headline, text, button, and destination URL.
-- The names you used for the campaign, ad set, and ad.
-Then ask me to review each part and tell you what to change.
+## Part 4: Write my playbook
+Produce one "Meta Ads Playbook" document with everything except the token: my account, Page, pixel, and Instagram IDs, the naming pattern with examples, my standard events and what to optimize for, my saved audiences, my defaults, and my UTM standard. Format it so I can paste it back at the start of any future session and you will have full context.
 
-## Going live
-- Do NOT set anything active until I reply with "launch it."
-- When I do, turn ONLY the campaign to active. Do not rebuild or re-edit the ad, because that can reset settings.
-- After it is live, tell me how to watch results and when it is normal to start seeing them.
+Then list the short prompts I can give you from here to build, launch, and manage campaigns.
 
-Start now by listing my ad accounts and confirming which one we are using.</code></pre>
+Start with Part 1, step 1.</code></pre>
   </div>
-  <p class="hint">The prompt carries its own instructions. Just paste it and answer Claude's questions one at a time.</p>
+  <p class="hint">The output that matters is the playbook at the end. Save it where you can find it. Keep the token out of it.</p>
 
-  <h2>What the connector actually does</h2>
-  <p>Once connected, Claude can see your ad accounts, pages, campaigns, and results, and it can create and change campaigns for you. You talk to it in plain language, and it makes the calls to Meta in the background. You are not clicking through Ads Manager. You are describing what you want and checking its work.</p>
-  <p>It can build a campaign, set the budget and audience, write and place the ad, pull performance numbers, and pause or adjust things later. The account stays yours. Claude only acts through the access you approved when you signed in, and you can remove that access any time.</p>
+  <h2>Step 2: Keep your playbook</h2>
+  <p>The playbook is the payoff. It is a short block of text holding everything Claude needs about your account, minus the token. Save it in a note, a doc, or a project file. At the start of any future ad session, paste it first. Then your request can be one line, because the context is already loaded.</p>
 
-  <h2>Rules that keep you safe</h2>
-  <ul>
-    <li><strong>Build paused, always.</strong> Nothing should spend until you have read the summary and said go. The prompt enforces this.</li>
-    <li><strong>Set a spending limit.</strong> A daily cap and an account spending limit mean a mistake costs you a little, not a lot.</li>
-    <li><strong>Read the summary out loud.</strong> Check the audience, the budget, the destination link, and the ad text before you launch. Most costly errors are a wrong link or a budget with an extra zero.</li>
-    <li><strong>Flip only the campaign to live.</strong> When you launch, turn on the campaign itself. Reopening and re-saving the ad can reset targeting or tracking you set up.</li>
-    <li><strong>Start small.</strong> Give a new campaign a modest daily budget for a few days, see what the numbers say, then decide whether to raise it.</li>
-  </ul>
+  <h2>Your prompt library</h2>
+  <p>With access wired in and your playbook saved, these are the short prompts you reuse as your needs change. Paste your playbook first, then one of these. Fill in the brackets.</p>
 
-  <h2>After it is live</h2>
-  <p>Ask Claude to pull your results whenever you want them. Good questions to ask it: "how much have I spent and how many leads so far," "which ad is performing best," and "is my cost per lead going up or down." Give a campaign a few days before you judge it. Meta needs time to learn who responds, and early numbers swing hard before they settle.</p>
+  <p class="lib-title">Build any campaign (leads, sales, traffic, messages)</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libBuild">Copy</button>
+    </div>
+    <pre><code id="libBuild">Using my Meta Ads Playbook above, build a new campaign, paused.
+Objective: [leads / sales / traffic / messages / engagement].
+Offer: [what it is].
+Destination: [URL or lead form].
+Daily budget: [amount]. Start date: [date].
+Audience: [cold / retargeting / lookalike, or describe].
+Creative: [the file path or attach it, plus headline and main text].
+Follow my naming pattern, optimize for my standard event for this objective, and show me a full summary before anything goes live. Do not launch until I say "launch it," then set only the campaign to active.</code></pre>
+  </div>
+
+  <p class="lib-title">Retarget a warm audience</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libRetarget">Copy</button>
+    </div>
+    <pre><code id="libRetarget">Using my Playbook, build a paused retargeting campaign to people who [visited my page / watched 50%+ of my video / engaged in the last 30 days].
+Offer: [what]. Daily budget: [amount].
+Reuse my naming and tracking. Summarize before launch, and do not go live until I approve.</code></pre>
+  </div>
+
+  <p class="lib-title">Scale a winner</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libScale">Copy</button>
+    </div>
+    <pre><code id="libScale">Pull the last 7 days for my active campaigns and tell me which ad set has the best cost per result. If one clearly leads, propose a plan to scale it (raise its budget slowly, or duplicate it into a fresh audience) and explain the risk of each. Change nothing until I approve.</code></pre>
+  </div>
+
+  <p class="lib-title">Weekly report</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libReport">Copy</button>
+    </div>
+    <pre><code id="libReport">Pull my Meta results for the last 7 days: spend, results, cost per result, and the best and worst ad in each campaign. Flag anything trending the wrong way and suggest one change for each. Keep it plain language.</code></pre>
+  </div>
+
+  <p class="lib-title">Pause the losers</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libPause">Copy</button>
+    </div>
+    <pre><code id="libPause">Find ad sets that have spent more than [amount] with zero or very expensive results in the last [number] days. List them with the numbers. Once I approve, pause only those and leave everything else running.</code></pre>
+  </div>
+
+  <h2>Why full access is worth the setup</h2>
+  <p>A plug-in connector can manage campaigns by chat, but it stops where its built-in tools stop. A token and the Marketing API give Claude the whole surface: uploading your own video and image creative, building every part of a campaign, pulling any report, and running it all on a schedule if you want. It does not expire, so you set it once. And because Claude runs the calls from your terminal, you can grow it into your own tooling later: a daily results pull, bulk creative uploads, whatever you need. The setup takes an afternoon. It pays back every campaign after.</p>
 
   <footer>
-    Connect once, describe what you want, and check the work before it goes live. Claude does the setup. You keep the control.
+    Wire in the token once, keep your playbook, and running Meta ads becomes a one-line request. Guard the token like the password it is.
   </footer>
 </div>
 
 <script>
   (function () {
-    var btn = document.getElementById('copyBtn');
-    var textEl = document.getElementById('promptText');
-    btn.addEventListener('click', function () {
-      var text = textEl.innerText;
-      function done() {
-        btn.textContent = 'Copied';
-        btn.classList.add('done');
-        setTimeout(function () {
-          btn.textContent = 'Copy prompt';
-          btn.classList.remove('done');
-        }, 1800);
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
-      } else {
-        fallback(text, done);
-      }
+    var btns = document.querySelectorAll('.copy-btn');
+    btns.forEach(function (btn) {
+      var label = btn.textContent;
+      btn.addEventListener('click', function () {
+        var el = document.getElementById(btn.getAttribute('data-target'));
+        if (!el) return;
+        var text = el.innerText;
+        function done() {
+          btn.textContent = 'Copied';
+          btn.classList.add('done');
+          setTimeout(function () {
+            btn.textContent = label;
+            btn.classList.remove('done');
+          }, 1800);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+        } else {
+          fallback(text, done);
+        }
+      });
     });
     function fallback(text, cb) {
       var ta = document.createElement('textarea');
