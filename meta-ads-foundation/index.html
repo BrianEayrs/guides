@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meta Ads with Claude: The Foundation Setup</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #1c1c1a;
+    --muted: #6b6a66;
+    --line: #e4e2dc;
+    --accent: #b5482f;
+    --code-bg: #1e1d1b;
+    --code-ink: #f2f0ea;
+    --note-bg: #fbf3ef;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171614;
+      --card: #201f1c;
+      --ink: #ecebe6;
+      --muted: #a3a099;
+      --line: #33312c;
+      --accent: #e06a4d;
+      --code-bg: #100f0e;
+      --code-ink: #f2f0ea;
+      --note-bg: #2a201c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 0 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 0 96px; }
+  .back { display: inline-block; margin-bottom: 24px; font-size: 0.9rem;
+    color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+  .kicker {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 12px;
+    font-weight: 700; color: var(--accent); margin: 0 0 14px;
+  }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .lead { font-size: 1.12rem; color: var(--muted); margin: 0; }
+  h2 { font-size: 1.35rem; margin: 48px 0 14px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.05rem; margin: 30px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 8px; }
+  .steps { padding-left: 22px; }
+  .steps li { margin: 0 0 14px; }
+  code {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 2px 6px; border-radius: 5px; font-size: 0.86em;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .prompt-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 8px; margin: 22px 0 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 10px 12px 10px 14px;
+  }
+  .prompt-head span { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: 0;
+    padding: 9px 18px; border-radius: 8px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; transition: opacity .15s, background .2s;
+    font-family: inherit; white-space: nowrap;
+  }
+  .copy-btn:hover { opacity: .9; }
+  .copy-btn.done { background: #2f8f5b; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    margin: 0; padding: 20px; border-radius: 10px;
+    overflow-x: auto; font-size: 0.82rem; line-height: 1.6;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .hint { font-size: 0.9rem; color: var(--muted); margin: 10px 2px 0; }
+  .note {
+    background: var(--note-bg); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 16px 20px; margin: 24px 0;
+  }
+  .note strong { color: var(--accent); }
+  .note p:last-child { margin-bottom: 0; }
+  .lib-title { font-size: 0.95rem; font-weight: 600; margin: 26px 0 0; }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 0.88rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&laquo; All guides</a>
+  <header>
+    <p class="kicker">Meta Ads Setup</p>
+    <h1>Meta Ads with Claude: The Foundation Setup</h1>
+    <p class="lead">For people who will run ads more than once and want it done right the first time. You set up the connection, the naming, and the tracking correctly, then have Claude write you a reusable playbook. After that, any campaign, of any type, is a short prompt away.</p>
+  </header>
+
+  <h2>Who this is for</h2>
+  <p>If you just want to launch one campaign today, start with the <a href="../meta-ads/">quick-start guide</a> instead. This one is for the person who already knows their way around Claude and plans to run ads on and off for a long time. The goal is not a single campaign. The goal is a clean foundation, so the data you collect stays trustworthy and every future campaign takes minutes, not an afternoon.</p>
+
+  <h2>What "set up right" means</h2>
+  <p>Four things, done once, pay off for years:</p>
+  <ul>
+    <li><strong>The connection.</strong> How Claude reaches your account, and whether you want it to last without re-logging in.</li>
+    <li><strong>A naming system.</strong> One pattern for every campaign, ad set, and ad, so a report six months from now still makes sense.</li>
+    <li><strong>Server-side tracking.</strong> The pixel plus the Conversions API, so Meta's optimizer sees clean data. This is the piece most people skip, and it is the one that compounds.</li>
+    <li><strong>A saved playbook.</strong> A short document holding your account details, naming, tracking, and audiences. You paste it back at the start of any future chat, and Claude picks up right where you left off.</li>
+  </ul>
+
+  <h2>Step 1: Pick your connection lane</h2>
+  <p>Two ways to connect Claude to Meta. Pick by how much you plan to automate.</p>
+  <ul>
+    <li><strong>Official connector</strong> (<code>https://mcp.facebook.com/ads</code>). Sign in with Meta, no code. Best for running and managing campaigns by chat. Right for most people. This is the same connector the quick-start guide uses.</li>
+    <li><strong>System User token and the Marketing API.</strong> More work up front, but the access does not expire, and it lets you run scripts and scheduled reports outside of chat. Right if you want automation: a daily KPI pull, bulk uploads, or your own tooling. Ask Claude to walk you through creating a System User in Business Settings and generating a long-lived token.</li>
+  </ul>
+  <div class="note">
+    <p><strong>Rule that saves money.</strong> Whichever lane you pick, campaigns Claude creates start paused. Keep it that way. Read the summary, then flip only the campaign to live. Never launch straight from a build.</p>
+  </div>
+
+  <h2>Step 2: The foundation prompt</h2>
+  <p>Paste this once. It does not build a campaign. It sets up your account and tracking correctly and ends by writing you a playbook to keep.</p>
+
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="foundationPrompt">Copy prompt</button>
+    </div>
+    <pre><code id="foundationPrompt">You are helping me set up my Meta (Facebook and Instagram) ads so I can run campaigns through you for the long term. I understand Claude well. I do NOT want a single campaign right now. I want the account, the naming, the tracking, and a reusable context set up correctly, so that later I can run any campaign by giving you a short, specific prompt.
+
+Work through the sections below with me, one at a time, and at the end produce a "Meta Ads Playbook" document I can save and paste back to you at the start of any future session.
+
+## 1. Connection and access
+- Confirm how you are connected to my Meta account (official connector, or an access token and the Marketing API). List my ad accounts, Pages, and Instagram accounts, and confirm which I use.
+- If I plan to run scheduled reports or automation later, tell me whether a System User token (which does not expire) is worth setting up, and give me the plain steps if so.
+
+## 2. Naming system
+- Propose a naming pattern for campaigns, ad sets, and ads in lowercase_with_underscores that encodes what matters: objective, audience, and creative or hook.
+- Give me the exact pattern and three example names. From now on, enforce it on everything you build.
+
+## 3. Tracking (the part that pays off for years)
+- Check that my pixel is installed and firing on my key pages.
+- Check whether I have server-side tracking (Conversions API) sending my main events. If not, walk me through setting it up. Browser-only tracking leaves the optimizer half-blind and gets worse over time.
+- Confirm which standard events I fire (Lead, CompleteRegistration, Purchase, and so on) and which one each campaign type should optimize for.
+- Record my pixel and dataset ID and my standard events in the playbook.
+
+## 4. Audiences and defaults
+- Help me define and save the audiences I will reuse: a core cold audience, a retargeting audience (site visitors, video viewers, engagers), and a lookalike if I have a source.
+- Record my default country or countries, age range, and a sensible starting daily budget.
+
+## 5. UTM and attribution
+- Confirm I am using consistent UTM parameters on my ad links so I can match ad spend to leads and sales in my CRM. If not, set the standard now.
+
+## 6. Write the playbook
+Produce one "Meta Ads Playbook" document with: my account and Page IDs, pixel and dataset ID, the naming pattern with examples, my standard events and what to optimize for, my saved audiences, my default targeting and budget, and my UTM standard. Format it so I can paste it back at the start of any future chat and you will have everything you need to build a campaign from a one-line request.
+
+Then list the short prompts I can give you for common jobs from here on.
+
+Start with section 1: confirm the connection and list my accounts.</code></pre>
+  </div>
+  <p class="hint">Answer one section at a time. The output you care about is the playbook at the end. Save it somewhere you can find it.</p>
+
+  <h2>Step 3: Keep the playbook, reuse it forever</h2>
+  <p>The playbook is the whole point. It is a short block of text that holds everything Claude needs to know about your account. Save it in a note, a doc, or a project file. At the start of any future ad session, paste it first. Then your actual request can be one line, because the context is already there.</p>
+
+  <h2>Your prompt library</h2>
+  <p>Once the playbook exists, these are the short prompts you reuse as your needs change. Paste your playbook first, then one of these. Fill in the brackets.</p>
+
+  <p class="lib-title">Build any campaign (leads, sales, traffic, messages)</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libBuild">Copy</button>
+    </div>
+    <pre><code id="libBuild">Using my Meta Ads Playbook above, build a new campaign, paused.
+Objective: [leads / sales / traffic / messages / engagement].
+Offer: [what it is].
+Destination: [URL or lead form].
+Daily budget: [amount]. Start date: [date].
+Audience: [cold / retargeting / lookalike, or describe].
+Creative: [attach the file or describe it, plus headline and main text].
+Follow my naming pattern, optimize for my standard event for this objective, and show me a full summary before anything goes live. Do not launch until I say "launch it," then turn only the campaign active.</code></pre>
+  </div>
+
+  <p class="lib-title">Retarget a warm audience</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libRetarget">Copy</button>
+    </div>
+    <pre><code id="libRetarget">Using my Playbook, build a paused retargeting campaign to people who [visited my page / watched 50%+ of my video / engaged in the last 30 days].
+Offer: [what]. Daily budget: [amount].
+Reuse my naming and tracking. Summarize before launch, and do not go live until I approve.</code></pre>
+  </div>
+
+  <p class="lib-title">Scale a winner</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libScale">Copy</button>
+    </div>
+    <pre><code id="libScale">Look at my active campaigns. Tell me which ad set has the best cost per result over the last 7 days. If one clearly leads, propose a plan to scale it (raise its budget slowly, or duplicate it into a fresh audience) and explain the risk of each. Change nothing until I approve.</code></pre>
+  </div>
+
+  <p class="lib-title">Weekly report</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libReport">Copy</button>
+    </div>
+    <pre><code id="libReport">Pull my Meta results for the last 7 days: spend, results, cost per result, and the best and worst ad in each campaign. Flag anything trending the wrong way and suggest one change for each. Keep it plain language.</code></pre>
+  </div>
+
+  <p class="lib-title">Pause the losers</p>
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="libPause">Copy</button>
+    </div>
+    <pre><code id="libPause">Find ad sets that have spent more than [amount] with zero or very expensive results in the last [number] days. List them with the numbers. Once I approve, pause only those and leave everything else running.</code></pre>
+  </div>
+
+  <h2>Why tracking is the part people skip</h2>
+  <p>Meta's optimizer only gets as smart as the data you feed it. A browser pixel alone misses a large share of events, because ad blockers, privacy settings, and iOS all cut into what the browser can report. The Conversions API sends those same events from your server, so the record is far more complete. Set it up once and every campaign you ever run learns faster and reports more honestly. Skip it, and you are paying Meta to guess. This is the single highest-return thing on this page.</p>
+
+  <footer>
+    Set the foundation once, keep your playbook, and running ads becomes a one-line request. The work up front is what makes everything after it fast.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var btns = document.querySelectorAll('.copy-btn');
+    btns.forEach(function (btn) {
+      var label = btn.textContent;
+      btn.addEventListener('click', function () {
+        var el = document.getElementById(btn.getAttribute('data-target'));
+        if (!el) return;
+        var text = el.innerText;
+        function done() {
+          btn.textContent = 'Copied';
+          btn.classList.add('done');
+          setTimeout(function () {
+            btn.textContent = label;
+            btn.classList.remove('done');
+          }, 1800);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+        } else {
+          fallback(text, done);
+        }
+      });
+    });
+    function fallback(text, cb) {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); cb();
+    }
+  })();
+</script>
+</body>
+</html>
