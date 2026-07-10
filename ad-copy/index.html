@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Write Your Ad Hooks and Copy</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #1c1c1a;
+    --muted: #6b6a66;
+    --line: #e4e2dc;
+    --accent: #b5482f;
+    --code-bg: #1e1d1b;
+    --code-ink: #f2f0ea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171614;
+      --card: #201f1c;
+      --ink: #ecebe6;
+      --muted: #a3a099;
+      --line: #33312c;
+      --accent: #e06a4d;
+      --code-bg: #100f0e;
+      --code-ink: #f2f0ea;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 0 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 0 96px; }
+  .back { display: inline-block; margin-bottom: 24px; font-size: 0.9rem;
+    color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+  .kicker {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 12px;
+    font-weight: 700; color: var(--accent); margin: 0 0 14px;
+  }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .lead { font-size: 1.12rem; color: var(--muted); margin: 0; }
+  h2 { font-size: 1.35rem; margin: 48px 0 14px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 8px; }
+  code {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 2px 6px; border-radius: 5px; font-size: 0.86em;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .prompt-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 8px; margin: 28px 0 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 10px 12px 10px 14px;
+  }
+  .prompt-head span { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: 0;
+    padding: 9px 18px; border-radius: 8px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; transition: opacity .15s, background .2s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { opacity: .9; }
+  .copy-btn.done { background: #2f8f5b; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    margin: 0; padding: 20px; border-radius: 10px;
+    overflow-x: auto; font-size: 0.82rem; line-height: 1.6;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .hint { font-size: 0.9rem; color: var(--muted); margin: 10px 2px 0; }
+  .note {
+    background: var(--card); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 10px;
+    padding: 16px 18px; margin: 24px 0; font-size: 0.96rem;
+  }
+  .note strong { color: var(--ink); }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 0.88rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&laquo; All guides</a>
+  <header>
+    <p class="kicker">Meta Ads Setup</p>
+    <h1>Write Your Ad Hooks and Copy</h1>
+    <p class="lead">Turn your offer into Facebook and Instagram ad hooks and copy that sound like a real person, not a pitch. The prompt writes several angles to test, keeps you inside the rules, and leaves the income and health claims out. Copy it, paste it into Claude, and answer its questions.</p>
+  </header>
+
+  <h2>The prompt</h2>
+  <p>Paste this whole block into Claude. It will ask about your offer and who you are talking to, then hand you hooks and copy ready to test.</p>
+
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" id="copyBtn">Copy prompt</button>
+    </div>
+    <pre><code id="promptText">You are helping me write Facebook and Instagram ad hooks and copy for my offer. I want ads that sound like a real person talking to one other person, not a hyped-up pitch. Ask me for what you need, then write several angles I can test.
+
+## Voice rules (follow these on every line)
+- Calm, direct, honest. Write like a mentor who has done the thing, not a marketer trying to sound clever.
+- Fourth-grade clear. If a reader has to stop and decode a line, rewrite it.
+- No hype, no fake urgency, no MLM-sounding language.
+- No em dashes. Use commas, periods, or ellipses.
+- Avoid these words: delve, unlock, elevate, empower, journey, game-changer, seamless, cutting-edge, transformative, supercharge, skyrocket.
+
+## Hard compliance rules (do not break these, they protect me)
+- Do NOT make income claims or promise earnings. No dollar figures, no "make X per month", no "quit your job" promises, no rags-to-riches. If I paste in a specific claim, tell me it is a compliance risk before you use it.
+- Do NOT make health claims about any product. No curing, treating, preventing, detoxing, alkalizing-your-body, or disease language.
+- Lead with the real desire instead: time, freedom, working from anywhere, getting unstuck, control over your day. Sell the change in someone's life, not a number.
+- Follow Meta's advertising policies. Do not imply you know a personal trait about the viewer ("Are you broke?", "Struggling with debt?"). Speak to a situation, not an accusation.
+
+## What makes a hook work (use these angles)
+The hook is the first line and the first three seconds. Write me a mix of these:
+- Call-out by situation: name the exact person and moment, not a label. "You built the business. You still do not own your morning."
+- Reframe: challenge a belief they hold. "You do not have an income problem. You have a structure problem."
+- Story open: drop them into a specific moment. "Two years ago I was answering emails at my kid's recital."
+- Plain promise: the clear result, stated calmly, no exclamation points.
+
+## Structure for the full ad
+1. Hook (first line, earns the next line).
+2. Tension or story (the real cost of staying where they are, or a short piece of your own story).
+3. The turn (what changed, or what you want them to see).
+4. Offer and call to action (one clear next step, calm, no countdown-timer energy).
+
+## What I want you to do
+1. Ask me for: my offer and who it is for, the specific person I am talking to and what they are stuck on, what makes me credible (my real story or result, no numbers I cannot back up), and the one action I want them to take.
+2. Write 8 hooks across the angles above, labeled by angle so I can see the spread.
+3. Pick your 3 strongest and write each into a full short ad (about 4 to 6 lines) and one longer version.
+4. For each, suggest the on-screen text or first caption line for a reel.
+5. Flag anything that drifts toward an income or health claim and give me a clean rewrite.
+
+Start by asking me about my offer and the exact person I am trying to reach.</code></pre>
+  </div>
+  <p class="hint">The prompt carries its own instructions, so you do not need to add anything. Just paste and answer.</p>
+
+  <h2>Why hooks decide everything</h2>
+  <p>Most ads are not lost in the offer. They are lost in the first line. If the hook does not stop the scroll and pull the next line, the rest of your copy never gets read, and the money you spent showing the ad is gone. So the work is in writing several hooks, testing them, and keeping the winners. This prompt gives you a spread to test instead of betting everything on one line.</p>
+
+  <h2>Speak to a situation, not a label</h2>
+  <p>The strongest hooks name the exact person and the exact moment they feel stuck. "You built something real and you still cannot take a Tuesday off" lands harder than "Want financial freedom?" It also keeps you inside Meta's rules, which do not allow ads that imply you know something personal about the viewer. Describe the situation you understand, and the right person recognizes themselves in it.</p>
+
+  <div class="note">
+    <strong>The claims guardrails are on for a reason.</strong> Income promises and product health claims are the two fastest ways to get an ad rejected or an account flagged. The prompt is built to steer around both and lead with the change in someone's life instead. If you ever want to state a specific result, make sure you can back it up and that it follows the rules where you operate.
+  </div>
+
+  <h2>Test, then keep what works</h2>
+  <ul>
+    <li>Run a few hooks against the same audience and offer, and change only the hook.</li>
+    <li>Give each one enough budget and time to show you a real signal before you judge it.</li>
+    <li>Keep the winners, cut the rest, and write new hooks off the angle that won.</li>
+    <li>Pair this with the UTM guide so you can see which hook actually drove each lead.</li>
+  </ul>
+
+  <footer>
+    Good ads are honest ads that found the right first line. Write ten, test a few, keep what works.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copyBtn');
+    var textEl = document.getElementById('promptText');
+    btn.addEventListener('click', function () {
+      var text = textEl.innerText;
+      function done() {
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = 'Copy prompt';
+          btn.classList.remove('done');
+        }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+      } else {
+        fallback(text, done);
+      }
+    });
+    function fallback(text, cb) {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); cb();
+    }
+  })();
+</script>
+</body>
+</html>
