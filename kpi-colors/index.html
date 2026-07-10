@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Color-Code Your KPI Sheet</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #1c1c1a;
+    --muted: #6b6a66;
+    --line: #e4e2dc;
+    --accent: #b5482f;
+    --code-bg: #1e1d1b;
+    --code-ink: #f2f0ea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171614;
+      --card: #201f1c;
+      --ink: #ecebe6;
+      --muted: #a3a099;
+      --line: #33312c;
+      --accent: #e06a4d;
+      --code-bg: #100f0e;
+      --code-ink: #f2f0ea;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 0 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 0 96px; }
+  .back { display: inline-block; margin-bottom: 24px; font-size: 0.9rem;
+    color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+  .kicker {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 12px;
+    font-weight: 700; color: var(--accent); margin: 0 0 14px;
+  }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .lead { font-size: 1.12rem; color: var(--muted); margin: 0; }
+  h2 { font-size: 1.35rem; margin: 48px 0 14px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 8px; }
+  code {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 2px 6px; border-radius: 5px; font-size: 0.86em;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 16px; }
+  .sw { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+  .chip { width: 20px; height: 20px; border-radius: 5px; border: 1px solid var(--line); }
+  .prompt-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 8px; margin: 28px 0 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 10px 12px 10px 14px;
+  }
+  .prompt-head span { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: 0;
+    padding: 9px 18px; border-radius: 8px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; transition: opacity .15s, background .2s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { opacity: .9; }
+  .copy-btn.done { background: #2f8f5b; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    margin: 0; padding: 20px; border-radius: 10px;
+    overflow-x: auto; font-size: 0.82rem; line-height: 1.6;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .hint { font-size: 0.9rem; color: var(--muted); margin: 10px 2px 0; }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 0.88rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&laquo; All guides</a>
+  <header>
+    <p class="kicker">Funnel Tracking</p>
+    <h1>Color-Code Your KPI Sheet</h1>
+    <p class="lead">Put traffic-light colors on your KPI tracker so you can read performance in one glance. Green is on target, yellow is drifting, red needs attention. Copy the prompt below, paste it into Claude, and it either sets the colors up for you or hands you the click-by-click steps.</p>
+  </header>
+
+  <h2>The prompt</h2>
+  <p>Paste this whole block into Claude. It will ask for your sheet and confirm your columns, then apply the rules or give you exact steps.</p>
+
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" id="copyBtn">Copy prompt</button>
+    </div>
+    <pre><code id="promptText">I want to color-code the KPI metrics in my Google Sheet so I can read performance at a glance. Set up traffic-light conditional formatting on each metric column:
+
+- Green = on target
+- Yellow = watch it, drifting
+- Red = problem, needs attention
+
+Use this exact rule set as the template. Every metric here is higher-is-better, so a bigger number is greener. Percentages are stored as fractions in the sheet (4% is saved as 0.04), so write the cutoffs in fraction form.
+
+THREE-BAND metrics (red, yellow, green):
+
+| Metric        | Red (low)   | Yellow (middle) | Green (good) |
+|---------------|-------------|-----------------|--------------|
+| CTR (All)     | &lt; 0.03      | 0.03 to 0.06    | &gt;= 0.06      |
+| CTR (Link)    | &lt; 0.01      | 0.01 to 0.03    | &gt;= 0.03      |
+
+TWO-BAND metrics (red, green):
+
+| Metric                 | Red (low) | Green (good) |
+|------------------------|-----------|--------------|
+| Lead Conv Rate         | &lt; 0.20    | &gt;= 0.20      |
+| Saw Offer Conv Rate    | &lt; 0.20    | &gt;= 0.20      |
+| Front End Sale Conv Rate | &lt; 0.03  | &gt;= 0.03      |
+| Book Call Rate         | &lt; 0.70    | &gt;= 0.70      |
+| Show Rate              | &lt; 0.80    | &gt;= 0.80      |
+| Close Rate             | &lt; 0.20    | &gt;= 0.20      |
+
+Colors to use:
+
+- Red:    #F4CCCC
+- Yellow: #FFF2B2
+- Green:  #CCEFCC
+
+How to build each rule:
+
+- Use a custom-formula rule so blank cells stay uncolored. For a column F rule, the green rule is: =AND($F2&lt;&gt;"", $F2&gt;=0.06). Swap the column letter and cutoff per metric.
+- Apply each rule from row 2 down to the bottom of the data.
+- Order matters: Sheets stops at the first rule that matches. Put red first, then yellow, then green, so the bands don't overlap.
+
+Now do this for me:
+
+1. Ask me for my sheet (a link or the sheet ID) and which tab the metrics are on.
+2. Ask me to confirm the column for each metric, since my layout may differ from the template above. If I track a metric where LOWER is better (like Cost Per Lead or CPM), flip the rule so the low end is green.
+3. If you can edit my sheet through a tool, apply the rules directly. If you can't, give me the exact click-by-click steps in Google Sheets: Format &gt; Conditional formatting &gt; Custom formula is, then the formula, range, and fill color for each rule.
+4. After you finish, tell me which columns you colored and the cutoffs you used, so I can spot-check.
+
+If I don't have targets for a metric yet, pull my last 30 days, show me a typical good day versus a bad day, and suggest cutoffs before you apply anything.</code></pre>
+  </div>
+  <p class="hint">The prompt carries its own instructions, so you do not need to add anything. Just paste and answer.</p>
+
+  <h2>Why color beats a wall of numbers</h2>
+  <p>A KPI sheet full of decimals hides the story. You scan it, everything looks fine, and you miss the one row that is quietly bleeding. Color fixes that. When your click rate goes red and your show rate stays green, you know in a second where the problem is and where it is not. You stop guessing and start fixing the right step.</p>
+
+  <div class="swatches">
+    <span class="sw"><span class="chip" style="background:#CCEFCC"></span> Green, on target</span>
+    <span class="sw"><span class="chip" style="background:#FFF2B2"></span> Yellow, drifting</span>
+    <span class="sw"><span class="chip" style="background:#F4CCCC"></span> Red, needs attention</span>
+  </div>
+
+  <h2>The cutoffs are a starting point</h2>
+  <p>The thresholds in the prompt are a sensible default for a webclass funnel. Your business may run at different numbers, and that is fine. When Claude asks, confirm your own targets, or let it pull your last 30 days and suggest cutoffs from what a good day and a bad day actually look like for you.</p>
+
+  <h2>One thing to watch</h2>
+  <p>Most funnel metrics are higher-is-better, so a bigger number gets greener. But a few, like cost per lead or cost per thousand views, are lower-is-better. For those, the rule flips: the low number should be green. The prompt already tells Claude to ask about this, so just point out any metric where cheaper or lower is the goal.</p>
+
+  <footer>
+    Set the colors once and your tracker starts telling you where to look. That is the whole point of tracking.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copyBtn');
+    var textEl = document.getElementById('promptText');
+    btn.addEventListener('click', function () {
+      var text = textEl.innerText;
+      function done() {
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = 'Copy prompt';
+          btn.classList.remove('done');
+        }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+      } else {
+        fallback(text, done);
+      }
+    });
+    function fallback(text, cb) {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); cb();
+    }
+  })();
+</script>
+</body>
+</html>
