@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Webclass Video Tracking Setup Guide</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #1c1c1a;
+    --muted: #6b6a66;
+    --line: #e4e2dc;
+    --accent: #b5482f;
+    --code-bg: #1e1d1b;
+    --code-ink: #f2f0ea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171614;
+      --card: #201f1c;
+      --ink: #ecebe6;
+      --muted: #a3a099;
+      --line: #33312c;
+      --accent: #e06a4d;
+      --code-bg: #100f0e;
+      --code-ink: #f2f0ea;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 0 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 0 96px; }
+  .back { display: inline-block; margin-bottom: 24px; font-size: 0.9rem;
+    color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+  .kicker {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 12px;
+    font-weight: 700; color: var(--accent); margin: 0 0 14px;
+  }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .lead { font-size: 1.12rem; color: var(--muted); margin: 0; }
+  h2 { font-size: 1.35rem; margin: 48px 0 14px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 8px; }
+  code {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 2px 6px; border-radius: 5px; font-size: 0.86em;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .prompt-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 8px; margin: 28px 0 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 10px 12px 10px 14px;
+  }
+  .prompt-head span { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: 0;
+    padding: 9px 18px; border-radius: 8px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; transition: opacity .15s, background .2s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { opacity: .9; }
+  .copy-btn.done { background: #2f8f5b; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    margin: 0; padding: 20px; border-radius: 10px;
+    overflow-x: auto; font-size: 0.82rem; line-height: 1.6;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .hint { font-size: 0.9rem; color: var(--muted); margin: 10px 2px 0; }
+  .note {
+    background: var(--card); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 10px;
+    padding: 16px 18px; margin: 24px 0; font-size: 0.96rem;
+  }
+  .note strong { color: var(--ink); }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 0.88rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&laquo; All guides</a>
+  <header>
+    <p class="kicker">Funnel Tracking</p>
+    <h1>Track Your Webclass Video, Second by Second</h1>
+    <p class="lead">Build a tracker around the video player on your GoHighLevel webclass page. It logs every play, pause, and drop-off to your own Google Sheet, then writes where each viewer left back onto their contact record. Copy the prompt below, paste it into Claude, and answer its questions.</p>
+  </header>
+
+  <h2>The prompt</h2>
+  <p>Paste this whole block into Claude. It will ask about your pages and your GoHighLevel setup, then build you the three pieces and walk you through wiring them up.</p>
+
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" id="copyBtn">Copy prompt</button>
+    </div>
+    <pre><code id="promptText">You are helping me build a custom tracking tool around the video player on my GoHighLevel (GHL) webclass page. It should capture playback events (play, pause, seek, milestones, exit) and send them to my own Google Sheet, then push a summary of where each viewer paused or left back into GHL as contact custom fields.
+
+Ask me for anything you need, then build it and walk me through wiring it up.
+
+## Why this exists
+GHL's built-in video tracking only reports at rough milestones (commonly 5, 25, 50, 75, 95 percent) and only flushes when the viewer pauses or leaves the page. On a long webclass the earliest fire can be two minutes in, and it never tells me the exact second someone left. I want second-level precision on where viewers drop off, and I want that written onto the contact so my follow-up can use it.
+
+## The constraint you need to know
+GHL funnel and webclass pages do NOT expose the contact's identity to custom JavaScript, and they do not resolve merge fields inside a custom code element. So a script on the page can detect the play and pause, but it cannot tell GHL who did it. We solve identity three ways (below), not by reading it off the page.
+
+## The three pieces to build
+1. A Google Apps Script web app, bound to a Google Sheet, that receives events by POST and:
+   - logs every raw event to an "Events" tab
+   - keeps one summary row per viewing session in a "Sessions" tab
+   - on pause, exit, or ended, writes the viewer's last position and furthest position (as mm:ss) to two GHL contact custom fields
+2. A small JavaScript snippet I paste onto the webclass page as a custom code element. It hooks the native video, sends events with sendBeacon, and carries a session id plus whatever identity it has.
+3. A second tiny snippet on my registration page that remembers the email typed into the form, so same-browser viewers are identified.
+
+## Identity (how we know who is watching), in priority order
+1. A URL parameter cid carrying the GHL contact id, which I add to the webclass links in my email automations. Best option, because it keeps no email address in the URL.
+2. A URL parameter em carrying the email, as an alternative.
+3. localStorage set by the registration-page snippet at form submit, which covers the ad to register to watch path in the same browser.
+If none are present, still log the session and count it in aggregate, just with no push to GHL. Store whichever identity is present in localStorage so it survives to later visits, and put a unique session id (a UUID) on every event row so I can group a session even when it is anonymous.
+
+## Things that will bite us, so handle them up front
+- Deploy the Apps Script web app with access set to "Anyone", not "Anyone with a Google account". Otherwise anonymous viewers get bounced to a Google sign-in page and nothing is recorded.
+- Every time the script code changes, redeploy it as a NEW VERSION (Manage deployments, edit, Version: New version). Saving the file alone does not update the live web app. This one wastes the most time if missed.
+- Send events as text/plain with sendBeacon, so the browser does not fire a CORS preflight that Apps Script cannot answer.
+- The GHL native player injects its video element only when the poster is clicked, so poll for it every 500ms instead of assuming it exists on page load.
+- Put a simple shared token in the payload and check it server-side, to drop random bot and scanner traffic. It is visible in page source, so it stops bots, not a determined person.
+- Throttle the push to GHL (for example, one per contact every 45 seconds) so scrub-pausing does not hammer the API.
+
+## GHL specifics (v2 API)
+- I use a Private Integration Token (PIT). Base URL is https://services.leadconnectorhq.com and the header Version is 2021-07-28.
+- Create, or have me create, two contact custom fields (for example "Webclass Last Position" and "Webclass Max Position"), both Text, then use their field ids.
+- To update a contact, PUT /contacts/{id} with a body of {customFields:[{id, field_value}]}. To find a contact by email, POST /contacts/search filtering on email. If I pass the contact id directly, skip the search.
+- Keep the token and the field ids in Apps Script Script Properties, never hardcoded in the file.
+
+## What I want from you
+1. Ask me for: my webclass video page URL or URLs, my registration page URL, whether I already have a GHL Private Integration Token and the two custom fields (offer to explain how to create them), and which Google account holds my sheet.
+2. Generate three things, ready to paste: the Apps Script code, the webclass-page snippet, and the registration-page snippet, each with clearly marked spots for my endpoint URL, my shared token, and my field ids.
+3. Give me numbered wiring steps in order, including the deploy settings above, and a way to test the whole chain end to end with a throwaway contact before I trust it.
+4. Warn me before any step that writes to my live CRM.
+
+Start by asking me for my webclass page URL and whether I am on GoHighLevel.</code></pre>
+  </div>
+  <p class="hint">The prompt carries its own instructions, so you do not need to add anything. Just paste and answer.</p>
+
+  <h2>What this tool does</h2>
+  <p>It watches the video on your webclass page and records what each viewer actually does: when they press play, every time they pause, when they skip around, and the exact second they close the tab. All of that lands in a Google Sheet you own. Then, for anyone you can identify, it writes their last position and their furthest position straight onto their GoHighLevel contact, so your follow-up can treat someone who left at minute two differently from someone who watched to the offer.</p>
+
+  <h2>Why the built-in tracking is not enough</h2>
+  <p>GoHighLevel does track video watching, but only in rough steps, usually 5, 25, 50, 75, and 95 percent. On a 40-minute webclass, that first 5 percent mark is already two minutes in, so anyone who bounces early is invisible. It also only records when someone pauses or leaves, and it never gives you the exact second they dropped. If you want to know where your webclass actually loses people, you need finer measurement than the platform gives you.</p>
+
+  <h2>How it works</h2>
+  <p>Three small pieces, and none of them touch a server you have to maintain:</p>
+  <ul>
+    <li><strong>A script on the webclass page</strong> listens to the video and sends each event to your endpoint.</li>
+    <li><strong>A Google Apps Script tied to a Sheet</strong> is that endpoint. It logs every event, keeps a running summary per viewer, and pushes the drop-off point back to GoHighLevel.</li>
+    <li><strong>A tiny script on the registration page</strong> remembers the email someone typed in, so you can connect their watching back to their contact record.</li>
+  </ul>
+
+  <h2>The identity problem, and how it gets solved</h2>
+  <p>GoHighLevel pages will not tell a script who the viewer is. So the tool figures it out three ways: a contact id added to the links in your reminder emails, an email in the link as a backup, and the email captured on the registration page for people who watch in the same browser they signed up in. Anyone the tool cannot identify still gets counted in your totals, just without a name attached.</p>
+
+  <div class="note">
+    <strong>You need a GoHighLevel Private Integration Token</strong> for the write-back to work. It lives in Settings, under Private Integrations, and only needs contact read and write access. Claude will point you to it and keep it out of your code. Everything else runs on a free Google account.
+  </div>
+
+  <h2>What you need before you start</h2>
+  <ul>
+    <li>A GoHighLevel account with a webclass or video funnel page.</li>
+    <li>A Google account for the Sheet that will hold your data (your existing KPI sheet works fine).</li>
+    <li>A GoHighLevel Private Integration Token, or a few minutes to create one when Claude asks.</li>
+    <li>Access to edit your funnel pages in GoHighLevel, since you will paste the snippets in yourself.</li>
+  </ul>
+
+  <footer>
+    Set this up once and every webclass viewer tells you where they left. That is the number that shows you what to fix.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copyBtn');
+    var textEl = document.getElementById('promptText');
+    btn.addEventListener('click', function () {
+      var text = textEl.innerText;
+      function done() {
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(function () {
+          btn.textContent = 'Copy prompt';
+          btn.classList.remove('done');
+        }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+      } else {
+        fallback(text, done);
+      }
+    });
+    function fallback(text, cb) {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); cb();
+    }
+  })();
+</script>
+</body>
+</html>
