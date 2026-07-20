@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Update Your Tracker with Meta Data</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --card: #ffffff;
+    --ink: #1c1c1a;
+    --muted: #6b6a66;
+    --line: #e4e2dc;
+    --accent: #b5482f;
+    --code-bg: #1e1d1b;
+    --code-ink: #f2f0ea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171614;
+      --card: #201f1c;
+      --ink: #ecebe6;
+      --muted: #a3a099;
+      --line: #33312c;
+      --accent: #e06a4d;
+      --code-bg: #100f0e;
+      --code-ink: #f2f0ea;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 0 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 56px 0 96px; }
+  .back { display: inline-block; margin-bottom: 24px; font-size: 0.9rem;
+    color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 40px; }
+  .kicker {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 12px;
+    font-weight: 700; color: var(--accent); margin: 0 0 14px;
+  }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .lead { font-size: 1.12rem; color: var(--muted); margin: 0; }
+  h2 { font-size: 1.35rem; margin: 48px 0 14px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  ul { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 8px; }
+  code {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 2px 6px; border-radius: 5px; font-size: 0.86em;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .note {
+    background: var(--card); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 10px;
+    padding: 14px 18px; margin: 0 0 8px; font-size: 0.96rem;
+  }
+  .prompt-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 8px; margin: 28px 0 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .prompt-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 10px 12px 10px 14px;
+  }
+  .prompt-head span { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+  .copy-btn {
+    background: var(--accent); color: #fff; border: 0;
+    padding: 9px 18px; border-radius: 8px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; transition: opacity .15s, background .2s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { opacity: .9; }
+  .copy-btn.done { background: #2f8f5b; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    margin: 0; padding: 20px; border-radius: 10px;
+    overflow-x: auto; font-size: 0.82rem; line-height: 1.6;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .hint { font-size: 0.9rem; color: var(--muted); margin: 10px 2px 0; }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 0.88rem; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&laquo; All guides</a>
+  <header>
+    <p class="kicker">Meta Ads Reporting</p>
+    <h1>Update Your Tracker with Meta Data</h1>
+    <p class="lead">Have Claude pull your daily spend, impressions, clicks, and CTR from Meta and drop them into the tracker you already use. It reads your sheet first, so it fills your columns instead of a template's.</p>
+  </header>
+
+  <p class="note">This guide assumes Claude can already reach your Meta ad account. If it can't yet, set that up once with the <a href="../meta-ads/">Run Your Meta Ads from the Terminal</a> guide, then come back here.</p>
+
+  <h2>Share your tracker first</h2>
+  <p>Every tracker is laid out differently. Yours might have five columns or twenty, dates down the left or across the top, tabs you use and tabs you don't. If Claude guesses the layout, it writes to the wrong cells or overwrites your own numbers.</p>
+  <p>So the prompt below starts by having Claude read <em>your</em> sheet. Give it access to your Google Sheet (or paste your column headers and a couple of rows), and it maps its pull to what you actually have. Only the ad-spend columns get touched. Your leads, sales, and funnel columns are left alone.</p>
+
+  <h2>The prompt</h2>
+  <p>Paste this whole block into Claude. It will ask you to share your tracker, read it back to you, then pull and fill on your confirmation.</p>
+
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="promptText">Copy prompt</button>
+    </div>
+    <pre><code id="promptText">I want you to pull my Meta (Facebook/Instagram) ad numbers and use them to update the tracking spreadsheet I already use. Before you pull or write anything, read my tracker so you match my columns, not a template. My sheet may have extra tabs and columns that are none of your concern — do not assume any layout.
+
+## Step 1 — Read my tracker first
+I will share my Google Sheet with you, or paste my column headers and a couple of rows. Look at it and tell me back:
+- Which tab holds the daily ad numbers.
+- Which column holds the date, and what date format it uses.
+- Which columns are the Meta / ad-spend columns you should fill, and which columns are my own funnel or CRM data that you must NOT touch.
+- The first and last date already written down the date column.
+Show me that read and let me confirm it before you pull or write anything.
+
+## Step 2 — Pull only what my tracker has room for
+Using my Meta Marketing API access, pull account-level daily insights, one row per day, for the date range my tracker covers. Only pull the metrics that map to a column I actually have. Do not invent columns and do not add tabs.
+
+Common Meta metrics and the field each comes from:
+- Spend — spend
+- CPM — cpm
+- Impressions — impressions
+- Reach — reach
+- Clicks (all) — clicks
+- CTR (all) — ctr
+- Link CTR — inline_link_click_ctr
+- Unique clicks — unique_clicks
+Map each of my columns to the right field. If one of my columns has no obvious Meta field, ask me rather than guessing.
+
+## Step 3 — Write it back by date, without clobbering my data
+- Match each Meta day to the row that already has that date. Do not append new rows and do not reorder mine.
+- Write only the Meta columns you identified in Step 1. Leave every other column exactly as it is.
+- If Meta has no data for a date I have (no spend ran that day), leave those cells blank rather than writing a zero, unless I tell you otherwise.
+- If my CTR cells are percent-formatted, write the fraction (0.0413 for 4.13%) so they display correctly.
+
+## Step 4 — Report back
+Tell me the date range you wrote, how many days had data, and which columns you filled. Give me the link to the sheet. Running this again should just refresh those columns, so it is safe to repeat.
+
+Start with Step 1: ask me to share my tracker, then read it back to me.</code></pre>
+  </div>
+  <p class="hint">The prompt carries its own instructions, so you do not need to add anything. Just paste, share your sheet, and confirm.</p>
+
+  <h2>What Claude pulls from Meta</h2>
+  <p>These are account-level daily numbers, one row per day. Claude fills whichever of these you have a column for and skips the rest.</p>
+  <ul>
+    <li><strong>Spend</strong> — what you paid that day.</li>
+    <li><strong>CPM</strong> — cost per thousand impressions.</li>
+    <li><strong>Impressions</strong> — how many times your ads showed.</li>
+    <li><strong>Reach</strong> — how many people saw them.</li>
+    <li><strong>Clicks (all)</strong> — every click, including likes and profile taps.</li>
+    <li><strong>CTR (all)</strong> — click rate on all clicks.</li>
+    <li><strong>Link CTR</strong> — click rate on the link itself, the number that matters most.</li>
+    <li><strong>Unique clicks</strong> — clicks counted one per person.</li>
+  </ul>
+
+  <h2>Why it reads your sheet before it writes</h2>
+  <p>Two reasons. First, your columns are yours. If your tracker calls a column "Ad Spend" and sits it in a different place than mine, Claude needs to see that before it writes, or the numbers land in the wrong cells. Second, and more important, your tracker holds data Meta knows nothing about: your leads, your sales, your webclass funnel. Reading first is how Claude knows to fill the ad columns and keep its hands off everything else.</p>
+
+  <footer>
+    Share your sheet once, confirm the read, and refreshing your ad numbers becomes a one-line ask.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    document.querySelectorAll('.copy-btn').forEach(function (btn) {
+      var textEl = document.getElementById(btn.getAttribute('data-target'));
+      btn.addEventListener('click', function () {
+        var text = textEl.innerText;
+        function done() {
+          btn.textContent = 'Copied';
+          btn.classList.add('done');
+          setTimeout(function () {
+            btn.textContent = 'Copy prompt';
+            btn.classList.remove('done');
+          }, 1800);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+        } else {
+          fallback(text, done);
+        }
+      });
+    });
+    function fallback(text, cb) {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); cb();
+    }
+  })();
+</script>
+</body>
+</html>
