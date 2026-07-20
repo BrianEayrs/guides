@@ -105,7 +105,7 @@
   <div class="prompt-card">
     <div class="prompt-head">
       <span>Copy into Claude</span>
-      <button class="copy-btn" id="copyBtn">Copy prompt</button>
+      <button class="copy-btn" data-target="promptText">Copy prompt</button>
     </div>
     <pre><code id="promptText">You are helping me build UTM tracking codes for my Meta (Facebook/Instagram) ads so I can see exactly which ad, audience, and campaign drives each lead or sale in my analytics and CRM.
 
@@ -195,6 +195,43 @@ Start by asking me for my destination URL and whether I want fixed or dynamic va
   <h2>Where it goes in Ads Manager</h2>
   <p>At the ad level, put your clean destination URL (no parameters) in the <strong>Website URL</strong> field. Put the UTM string in the <strong>URL parameters</strong> field. Or paste the full URL with parameters straight into Website URL. Do one or the other, never both, or the tags get doubled up.</p>
 
+  <h2>Read the results: which ad is winning</h2>
+  <p>Building the codes is half the job. The other half is reading them. Once leads start landing in your tracking sheet with their UTMs attached, you want one number per ad: what share of your leads did it bring in? That is the rollup that sits at the very top of the sheet, so the answer is the first thing you see, not something you scroll to find.</p>
+  <p>It looks like this:</p>
+  <pre><code>LEADS BY AD
+Ad/Hook             Leads   Share
+coffee_body_v1         12     34%
+time_freedom_r7         8     23%
+morning_routine_c4      5     14%
+(direct/organic)        5     14%
+TOTAL                  35    100%</code></pre>
+  <p>Each ad is counted by its <code>utm_content</code> value, sorted most leads first. Direct and organic traffic (no UTM) sits last as a baseline, not an ad to compare against, and the TOTAL row always adds to 100%. One look tells you where to put more budget and what to cut.</p>
+  <p>Paste this into Claude once your sheet has UTM-tagged leads in it.</p>
+
+  <div class="prompt-card">
+    <div class="prompt-head">
+      <span>Copy into Claude</span>
+      <button class="copy-btn" data-target="reportText">Copy prompt</button>
+    </div>
+    <pre><code id="reportText">I have a spreadsheet of leads (or sales) where each row is one person, and one column holds the UTM content value — the specific ad or creative that brought them in. I want a "leads by ad" rollup at the TOP of the sheet so I can see at a glance which ad is producing results.
+
+Ask me which column holds the ad/creative value (utm_content) and, if it is not obvious, which column marks a valid lead. Then build a summary block with three columns:
+
+- Ad/Hook — the ad or creative name from utm_content
+- Leads — how many leads that ad produced
+- Share — that ad's percentage of all leads, rounded to a whole number
+
+Rules:
+- Count one lead per row.
+- Group every row with no UTM content together as "(direct/organic)" and sort that group last. It is a baseline, not an ad to compare against.
+- Sort every real ad most leads first.
+- Add a TOTAL row at the bottom of the block. Its Share is 100%.
+- Put this block at the very top of the sheet, above the raw lead rows, so it is the first thing I see.
+
+If I paste the data directly instead of pointing you at a sheet, build the same rollup from what I paste.</code></pre>
+  </div>
+  <p class="hint">This reads the leads you already collected. Run it whenever you want a fresh read on which ad is carrying the campaign.</p>
+
   <footer>
     Set up once, name things consistently, and every click tells you where it came from.
   </footer>
@@ -202,23 +239,24 @@ Start by asking me for my destination URL and whether I want fixed or dynamic va
 
 <script>
   (function () {
-    var btn = document.getElementById('copyBtn');
-    var textEl = document.getElementById('promptText');
-    btn.addEventListener('click', function () {
-      var text = textEl.innerText;
-      function done() {
-        btn.textContent = 'Copied';
-        btn.classList.add('done');
-        setTimeout(function () {
-          btn.textContent = 'Copy prompt';
-          btn.classList.remove('done');
-        }, 1800);
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
-      } else {
-        fallback(text, done);
-      }
+    document.querySelectorAll('.copy-btn').forEach(function (btn) {
+      var textEl = document.getElementById(btn.getAttribute('data-target'));
+      btn.addEventListener('click', function () {
+        var text = textEl.innerText;
+        function done() {
+          btn.textContent = 'Copied';
+          btn.classList.add('done');
+          setTimeout(function () {
+            btn.textContent = 'Copy prompt';
+            btn.classList.remove('done');
+          }, 1800);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+        } else {
+          fallback(text, done);
+        }
+      });
     });
     function fallback(text, cb) {
       var ta = document.createElement('textarea');
